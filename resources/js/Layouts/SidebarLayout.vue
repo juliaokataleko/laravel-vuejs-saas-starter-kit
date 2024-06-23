@@ -208,7 +208,7 @@ const showingNavigationDropdown = ref(false);
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                     </svg>
                                 </span>
-                                <input type="text" class=" border-none p-1 bg-transparent outline-none" placeholder="Search" />
+                                <input type="text" class=" w-16 border-none p-1 bg-transparent outline-none" placeholder="Search" />
                             </div>
 
                             <button class="border border-slate-300 p-2 rounded-lg">
