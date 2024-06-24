@@ -2,7 +2,7 @@
 
 ## Composer Packages
 
--   Laravel Spatie Roles and Permissions -
+-   Laravel Spatie Roles and Permissions - https://spatie.be/docs/laravel-permission/v6/introduction
 -   Laravel Spatie Activity Logs - https://spatie.be/docs/laravel-activitylog/v4/introduction
 -   Laravel Welcome Notification - https://github.com/spatie/laravel-welcome-notification
 
