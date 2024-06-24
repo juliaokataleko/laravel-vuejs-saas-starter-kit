@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -15,7 +16,13 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::paginate(10);
+        $roles = Role::with('permissions')->paginate(10);
+
+        activity()
+        ->causedBy(auth()->user())
+        // ->performedOn($someContentModel)
+        ->log('accessed roles page');
+
         return Inertia::render('Admin/Roles/Index', compact('roles'));
     }
 
@@ -24,8 +31,9 @@ class RoleController extends Controller
      */
     public function create()
     {
+        $permissions = Permission::orderBy("id")->get();
         $role = new Role();
-        return Inertia::render('Admin/Roles/Form', compact('role'));
+        return Inertia::render('Admin/Roles/Form', compact('role', 'permissions'));
     }
 
     /**
@@ -34,7 +42,29 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
         $data = $request->validated();
-        Role::query()->create($data);
+
+        $permisisons = [];
+
+        try {
+            $permisisons = request("permissions");
+            unset($data["permissions"]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
+        $role = Role::query()->create($data);
+        
+        $permissionsArray = [];
+        foreach ($permisisons as $key => $perItem) {
+            $permissionsArray[] = $perItem['id'];
+        }
+
+        $role->syncPermissions($permissionsArray);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($role)
+        ->log('Created a role');
 
         return redirect(route('roles.index'))->with('success', 'Role created');
     }
@@ -44,8 +74,14 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
+        $permissions = Permission::orderBy("id")->get();
         $role = Role::findOrFail($id);
-        return Inertia::render('Admin/Roles/Form', compact('role'));
+
+        $employee_permissions = [];
+        foreach ($role->permissions as $key => $permission) { $employee_permissions[] = $permission->id; }
+        $role->permissions = $employee_permissions;
+
+        return Inertia::render('Admin/Roles/Form', compact('role', 'permissions'));
     }
 
     /**
@@ -53,8 +89,14 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
+        $permissions = Permission::orderBy("id")->get();
         $role = Role::findOrFail($id);
-        return Inertia::render('Admin/Roles/Form', compact('role'));
+
+        $employee_permissions = [];
+        foreach ($role->permissions as $key => $permission) { $employee_permissions[] = $permission->id; }
+        $role->permissions = $employee_permissions;
+
+        return Inertia::render('Admin/Roles/Form', compact('role', 'permissions'));
     }
 
     /**
@@ -64,7 +106,27 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
         $data = $request->validated();
+
+        try {
+            $permisisons = request("permissions");
+            unset($data["permissions"]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
         $role->update($data);
+        
+        $permissionsArray = [];
+        foreach ($permisisons as $key => $perItem) {
+            $permissionsArray[] = $perItem['id'];
+        }
+
+        $role->syncPermissions($permissionsArray);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($role)
+        ->log('Updated a role');
 
         return redirect(route('roles.index'))->with('success', 'Role updated');
     }
@@ -75,6 +137,12 @@ class RoleController extends Controller
     public function destroy(string $id)
     {
         $role = Role::findOrFail($id);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($role)
+        ->log('Deleted a role');
+
         $role->delete();
 
         return redirect(route('roles.index'))->with('success', 'Role deleted');

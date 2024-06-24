@@ -11,29 +11,40 @@ import InputError from '@/Components/InputError.vue';
 import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 
 const props = defineProps({
-    permission: {
+    user: {
         type: Object,
         default: () => ({}),
     },
+    roles: {
+        type: Object,
+        default: () => ({}),
+    },
+    businesses: {
+        type: Object,
+        default: () => ({}),
+    }
 });
 
 const form = useForm({
-    name: props.permission.name,
+    name: props.user.name,
+    email: props.user.email,
+    role: props.user.role,
+    business_id: props.user.business_id
 });
 
 const submitForm = () => {
 
-    if (props.permission.id) {
-        form.put(route('permissions.update', props.permission.id))
+    if (props.user.id) {
+        form.put(route('users.update', props.user.id))
         return
     }
 
-    form.post(route('permissions.store'))
+    form.post(route('users.store'))
 }
 </script>
 
 <template>
-    <Head :title="permission.id ? 'Edit permission' : 'Add permission'" />
+    <Head :title="user.id ? 'Edit user' : 'Add user'" />
 
     <SidebarLayout>
         <template #header>
@@ -41,10 +52,10 @@ const submitForm = () => {
                 <h2
                     class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
                 >
-                    {{ permission.id ? "Edit permission" : "Add permission" }}
+                    {{ user.id ? "Edit user" : "Add user" }}
                 </h2>
                 <div>
-                    <Link :href="route('permissions.index')" class="uppercase"
+                    <Link :href="route('users.index')" class="uppercase"
                         ><BigBackIcon /></Link
                     >
                 </div>
@@ -71,6 +82,52 @@ const submitForm = () => {
                             <InputError
                                 class="mt-2"
                                 :message="form.errors.name"
+                            />
+
+                        </div>
+
+                        <div>
+                            <InputLabel for="email" value="Email" />
+
+                            <TextInput
+                                id="email"
+                                type="email"
+                                class="mt-1 block w-full"
+                                v-model="form.email"
+                                required
+                            />
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.email"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="business_id" value="Business" />
+
+                            <select class="form-input w-full" name="business_id" id="business_id" v-model="form.business_id">
+                                <option value="">Select a business</option>
+                                <option v-for="(business, index) in businesses" :key="index" :value="business.id">{{ business.name }}</option>
+                            </select>
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.business_id"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="role" value="Role" />
+
+                            <select class="form-input w-full" name="role" id="role" v-model="form.role">
+                                <option value="">Select a role</option>
+                                <option v-for="(role, index) in roles" :key="index" :value="role.id">{{ role.name }}</option>
+                            </select>
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.role"
                             />
                         </div>
 

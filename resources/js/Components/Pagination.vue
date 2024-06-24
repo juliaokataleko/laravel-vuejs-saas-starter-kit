@@ -5,8 +5,8 @@
                <div v-if="link.url === null" class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded"
                    v-html="link.label" />
                <Link v-else
-                   class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-yellow-700 focus:text-yellow-500"
-                   :class="{ 'bg-yellow-700 text-white': link.active }" :href="link.url" v-html="link.label" />
+                   class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-slate-700 focus:text-slate-500"
+                   :class="{ 'bg-slate-700 text-white': link.active }" :href="link.url" v-html="link.label" />
            </template>
        </div>
    </div>

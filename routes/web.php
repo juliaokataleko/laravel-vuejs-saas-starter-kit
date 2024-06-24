@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BusinessController;
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\RoleController;
@@ -31,10 +32,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', Admin::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('users', UserController::class);
+    Route::resource('logs', LogController::class);
     Route::resource('businesses', BusinessController::class);
     Route::resource('plans', PlanController::class);
     Route::resource('subscriptions', SubscriptionController::class);

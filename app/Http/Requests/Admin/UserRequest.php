@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RoleRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,15 @@ class RoleRequest extends FormRequest
     {
         return [
             'name' => ['required'],
-            'permissions' => ['nullable']
+            'email' => ['required'],
+            'business_id' => ['nullable']
         ];
     }
+
+    public function validated($key = null, $default = null)
+    {
+        $validated = $this->validator->validated();
+        return $validated;
+    }
+
 }

@@ -9,9 +9,10 @@ import DangerButton from "@/Components/DangerButton.vue";
 import EditIcon from "@/Components/Icons/EditIcon.vue";
 import DeleteIcon from "@/Components/Icons/DeleteIcon.vue";
 import BigPlusIcon from "@/Components/Icons/BigPlusIcon.vue";
+import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 
 const props = defineProps({
-    roles: {
+    users: {
         type: Object,
         default: () => ({}),
     },
@@ -21,49 +22,41 @@ const deleteForm = useForm({});
 
 const deleteRecord = (id) => {
     if (confirm("Are you sure?")) {
-        deleteForm.delete(route("roles.destroy", id));
+        deleteForm.delete(route("users.destroy", id));
     }
 };
 </script>
 
 <template>
-    <Head title="Roles" />
+    <Head title="Users" />
 
     <SidebarLayout>
         <template #header>
+
             <div class="flex items-center justify-between">
-                <h2
-                    class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
-                >
-                    Roles
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    Users
                 </h2>
                 <div>
-                    <Link :href="route('roles.create')" class="uppercase"
-                        > <BigPlusIcon /> </Link
-                    >
+                    <Link :href="route('users.create')" class="uppercase">
+                        <BigPlusIcon />
+                    </Link>
                 </div>
             </div>
+
         </template>
 
         <div class="">
             <div class="space-y-4">
                 <div class="shadow-md p-4 rounded-lg bg-white">
-                    <div class="flex items-center justify-between  mb-3">
-                        <div>
-                            <pagination class="mt-2" :links="roles.links" />
-                        </div>
 
-                        <div>
-                            <Link :href="route('permissions.index')" class="uppercase border border-slate-200 rounded-xl p-2">Permissions</Link>
-                        </div>
-                    </div>
                     <div class="overflow-x-auto w-full">
                         <table>
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>Permissions</th>
+                                    <th>Email</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -72,24 +65,24 @@ const deleteRecord = (id) => {
                                 <tr>
                                     <td
                                         colspan="3"
-                                        v-if="roles.data.length == 0"
+                                        v-if="users.data.length == 0"
                                     >
                                         There is no records yet. Start adding.
                                     </td>
                                 </tr>
 
                                 <tr
-                                    v-for="(role, index) in roles.data"
+                                    v-for="(user, index) in users.data"
                                     :key="index"
                                 >
-                                    <td>{{ role.id }}</td>
-                                    <td>{{ role.name }}</td>
-                                    <td> {{ role.permissions.length }} </td>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
                                     <td>
                                         <div class="space-x-2">
                                             <Link
                                                 :href="
-                                                    route('roles.edit', role.id)
+                                                    route('users.edit', user.id)
                                                 "
                                             >
                                                 <PrimaryButton>
@@ -98,7 +91,7 @@ const deleteRecord = (id) => {
                                             </Link>
 
                                             <DangerButton
-                                                @click="deleteRecord(role.id)"
+                                                @click="deleteRecord(user.id)"
                                             >
                                                 <DeleteIcon />
                                             </DangerButton>
@@ -110,7 +103,7 @@ const deleteRecord = (id) => {
                     </div>
 
                     <div>
-                        <pagination class="mt-2" :links="roles.links" />
+                        <pagination class="mt-2" :links="users.links" />
                     </div>
                 </div>
             </div>
