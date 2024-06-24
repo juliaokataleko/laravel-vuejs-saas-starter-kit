@@ -47,7 +47,13 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $data = $request->validated();
+
+        $data['password'] = bcrypt(uniqid());
+
         $user = User::query()->create($data);
+
+        $expiresAt = now()->addDay();
+        $user->sendWelcomeNotification($expiresAt);
 
         if(request('role')) {
             $role = Role::findOrFail(request('role'));

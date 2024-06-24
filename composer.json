@@ -13,7 +13,7 @@
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-medialibrary": "^11.7",
         "spatie/laravel-permission": "^6.9",
-        "spatie/laravel-welcome-notification": "*",
+        "spatie/laravel-welcome-notification": "^2.4",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

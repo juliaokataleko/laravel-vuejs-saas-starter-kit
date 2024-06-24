@@ -3,15 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\MyCustomWelcomeNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\WelcomeNotification\ReceivesWelcomeNotification;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
     use HasRoles;
+    use ReceivesWelcomeNotification;
 
     /**
      * The attributes that are mass assignable.
@@ -46,4 +50,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function sendWelcomeNotification(\Carbon\Carbon $validUntil)
+{
+    $this->notify(new MyCustomWelcomeNotification($validUntil));
+}
 }

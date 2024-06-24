@@ -26,6 +26,7 @@ const props = defineProps({
 });
 
 const form = useForm({
+    id: props.user.id,
     name: props.user.name,
     email: props.user.email,
     role: props.user.role,
