@@ -4,6 +4,7 @@
 
 -   Laravel Spatie Roles and Permissions -
 -   Laravel Spatie Activity Logs - https://spatie.be/docs/laravel-activitylog/v4/introduction
+-   Laravel Welcome Notification - https://github.com/spatie/laravel-welcome-notification
 
 ## NPM packages
 
