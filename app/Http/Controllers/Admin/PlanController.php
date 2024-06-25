@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PlanRequest;
+use App\Models\Plan;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PlanController extends Controller
 {
@@ -12,7 +15,9 @@ class PlanController extends Controller
      */
     public function index()
     {
-        //
+        $plans = Plan::paginate(10);
+
+        return Inertia::render("Admin/Plans/Index", compact('plans'));
     }
 
     /**
@@ -20,46 +25,71 @@ class PlanController extends Controller
      */
     public function create()
     {
-        //
+        $plan = new Plan();
+        return Inertia::render("Admin/Plans/Form", compact('plan'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlanRequest $request)
     {
-        //
+        $data = $request->validated();
+        $plan = Plan::query()->create($data);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($plan)
+        ->log('Created a plan');
+
+        return redirect(route('plans.index'))->with('success', 'Plan created');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Plan $plan)
     {
-        //
+        return Inertia::render("Admin/Plans/Form", compact('plan'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Plan $plan)
     {
-        //
+        return Inertia::render("Admin/Plans/Form", compact('plan'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PlanRequest $request, Plan $plan)
     {
-        //
+        $data = $request->validated();
+
+        $plan->update($data);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($plan)
+        ->log('Updated a plan');
+
+        return redirect(route('plans.index'))->with('success', 'Plan updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Plan $plan)
     {
-        //
+        $plan->delete();
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($plan)
+        ->log('Deleted a plan');
+
+        return redirect(route('plans.index'))->with('success', 'Plan deleted');
     }
 }

@@ -16,10 +16,14 @@ return new class extends Migration
             $table->foreignId('employee_id')->nullable()->constrained('users');
             $table->string('name');
             $table->string('slug')->nullable()->unique();
-            $table->text('descriotion')->nullable();
+            $table->text('description')->nullable();
             $table->json('features')->nullable();
             $table->boolean('is_free')->default(false);
-            $table->decimal('price')->default(0);    
+
+            $table->decimal('monthly_price')->default(0);    
+            $table->decimal('quarterly_price')->default(0);   
+            $table->decimal('semiannually_price')->default(0);   
+            $table->decimal('annually_price')->default(0);   
 
             $table->boolean('active')->default(true);        
             $table->softDeletes();
