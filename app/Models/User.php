@@ -8,6 +8,7 @@ use App\Notifications\MyCustomWelcomeNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\WelcomeNotification\ReceivesWelcomeNotification;
 
@@ -16,6 +17,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     use HasRoles;
     use ReceivesWelcomeNotification;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
