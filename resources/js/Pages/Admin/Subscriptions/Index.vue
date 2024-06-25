@@ -10,6 +10,17 @@ import EditIcon from "@/Components/Icons/EditIcon.vue";
 import DeleteIcon from "@/Components/Icons/DeleteIcon.vue";
 import BigPlusIcon from "@/Components/Icons/BigPlusIcon.vue";
 import Toggle from "@/Components/Toggle.vue";
+import { VMoney } from 'v-money';
+import { ref } from "vue";
+
+const money = ref({
+   decimal: ',',
+   thousands: '.',
+   prefix: '$ ',
+   // suffix: ' #',
+   precision: 2,
+   masked: true
+})
 
 const props = defineProps({
     subscriptions: {
@@ -55,9 +66,11 @@ const deleteRecord = (id) => {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
-                                    <td>Doc Number</td>
-                                    <th>Slug</th>
+                                    <th>Plan</th>
+                                    <td>Business</td>
+                                    <th>Amount</th>
+                                    <th>Start Date</th>
+                                    <th>End date</th>
                                     <th>Active</th>
                                     <th></th>
                                 </tr>
@@ -74,20 +87,24 @@ const deleteRecord = (id) => {
                                 </tr>
 
                                 <tr
-                                    v-for="(business, index) in subscriptions.data"
+                                    v-for="(subscription, index) in subscriptions.data"
                                     :key="index"
                                 >
-                                    <td>{{ business.id }}</td>
-                                    <td>{{ business.name }}</td>
-                                    <td>{{ business.doc }}</td>
-                                    <td>{{ business.slug }}</td>
+                                    <td>{{ subscription.id }}</td>
+                                    <td>{{ subscription.plan.name }}</td>
+                                    <td>{{ subscription.business.name }}</td>
                                     <td>
-                                        <Toggle :status="business.active" />
+                                        <input type="text" disabled class=" border border-gray-50 p-1 rounded-md " v-model="subscription.amount"  v-money="money">
+                                    </td>
+                                    <td>{{ subscription.start_date }}</td>
+                                    <td>{{ subscription.end_date }}</td>
+                                    <td>
+                                        <Toggle :status="subscription.active" />
                                     </td>
                                     <td>
                                         <div class="space-x-2">
                                             <Link
-                                                :href="route('businesses.edit', business.id)"
+                                                :href="route('subscriptions.edit', subscription.id)"
                                             >
                                                 <PrimaryButton>
                                                     <EditIcon />
@@ -95,7 +112,7 @@ const deleteRecord = (id) => {
                                             </Link>
 
                                             <DangerButton
-                                                @click="deleteRecord(business.id)"
+                                                @click="deleteRecord(subscription.id)"
                                             >
                                                 <DeleteIcon />
                                             </DangerButton>

@@ -30,7 +30,7 @@ const cities = ref([])
 
 const getStates = () => {
     if (form.country_id) {
-        axios.get(route('countryStates', form.country_id)).then((response) => {
+        axios.get(route('api.countryStates', form.country_id)).then((response) => {
             if (response.data) {
                 states.value = response.data
             }
@@ -40,7 +40,7 @@ const getStates = () => {
 
 const getCities = () => {
     if (form.state_id) {
-        axios.get(route('stateCities', form.state_id)).then((response) => {
+        axios.get(route('api.stateCities', form.state_id)).then((response) => {
             if (response.data) {
                 cities.value = response.data
             }

@@ -5,9 +5,9 @@ import SidebarLayout from "@/Layouts/SidebarLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from '@/Components/TextInput.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import InputError from '@/Components/InputError.vue';
+import TextInput from "@/Components/TextInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import InputError from "@/Components/InputError.vue";
 import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 import Textarea from "@/Components/Textarea.vue";
 import Toggle from "@/Components/Toggle.vue";
@@ -15,76 +15,59 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 
 const props = defineProps({
-    business: {
+    subscription: {
         type: Object,
         default: () => ({}),
     },
-    countries: {
-        type: Object,
-        default: () => ({}),
-    }
 });
 
-const states = ref([])
-const cities = ref([])
+const businesses = ref([]);
+const plans = ref([]);
 
-const getStates = () => {
-    if (form.country_id) {
-        axios.get(route('countryStates', form.country_id)).then((response) => {
-            if (response.data) {
-                states.value = response.data
-            }
-        })
-    }    
-}
+const getBusinesses = () => {
+    axios.get(route("api.businesses.index")).then((response) => {
+        if (response.data) {
+            businesses.value = response.data;
+        }
+    });
+};
 
-const getCities = () => {
-    if (form.state_id) {
-        axios.get(route('stateCities', form.state_id)).then((response) => {
-            if (response.data) {
-                cities.value = response.data
-            }
-        })
-    }    
-}
+const getPlans = () => {
+    axios.get(route("api.plans.index")).then((response) => {
+        if (response.data) {
+            plans.value = response.data;
+        }
+    });
+};
 
 const form = useForm({
-    name: props.business.name,
-    doc: props.business.doc,
-    about: props.business.about,
-    phone: props.business.phone,
-    email: props.business.email,
-    active: props.business.active,
-    country_id: props.business.country_id,
-    state_id: props.business.state_id,
-    city_id: props.business.city_id,
-    address: props.business.address,
+    business_id: props.subscription.business_id,
+    plan_id: props.subscription.plan_id,
+    billing_cycle: props.subscription.billing_cycle,
+    active: props.subscription.active,
+    status: props.subscription.status,
+    start_date: props.subscription.start_date,
+    end_date: props.subscription.end_date,
 });
 
 const submitForm = () => {
-
-    if (props.business.id) {
-        form.put(route('businesses.update', props.business.id))
-        return
+    if (props.subscription.id) {
+        form.put(route("subscriptions.update", props.subscription.id));
+        return;
     }
 
-    form.post(route('businesses.store'))
-}
+    form.post(route("subscriptions.store"));
+};
 
 onMounted(() => {
-    if (props.business.country_id) {
-        getStates()
-    }
-
-    if (props.business.state_id) {
-        getCities()
-    }
-})
-
+    console.log("Yeahhhh");
+    getBusinesses();
+    getPlans();
+});
 </script>
 
 <template>
-    <Head :title="business.id ? 'Edit business' : 'Add business'" />
+    <Head :title="subscription.id ? 'Edit subscription' : 'Add subscription'" />
 
     <SidebarLayout>
         <template #header>
@@ -92,12 +75,16 @@ onMounted(() => {
                 <h2
                     class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
                 >
-                    {{ business.id ? "Edit business" : "Add business" }}
+                    {{
+                        subscription.id
+                            ? "Edit subscription"
+                            : "Add subscription"
+                    }}
                 </h2>
                 <div>
-                    <Link :href="route('businesses.index')" class="uppercase"
-                        ><BigBackIcon /></Link
-                    >
+                    <Link :href="route('subscriptions.index')" class="uppercase"
+                        ><BigBackIcon
+                    /></Link>
                 </div>
             </div>
         </template>
@@ -105,76 +92,8 @@ onMounted(() => {
         <div class="">
             <div class="space-y-4">
                 <div class="shadow-md p-4 rounded-lg bg-white">
-                    <div class="grid grid-cols-1 gap-3">
-
-                        <div>
-                            <InputLabel for="name" value="Name" />
-
-                            <TextInput
-                                id="name"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.name"
-                                required
-                                autofocus
-                                autocomplete="name"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.name"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="doc" value="Doc Number" />
-
-                            <TextInput
-                                id="doc"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.doc"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.doc"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="email" value="Email" />
-
-                            <TextInput
-                                id="email"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.email"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.email"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="phone" value="Phone" />
-
-                            <TextInput
-                                id="phone"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.phone"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.phone"
-                            />
-                        </div>
-
-                        <div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <!-- <div>
                             <InputLabel for="about" value="About" />
 
                             <Textarea
@@ -188,74 +107,149 @@ onMounted(() => {
                                 class="mt-2"
                                 :message="form.errors.about"
                             />
-                        </div>
+                        </div> -->
 
                         <div>
-                            <InputLabel for="country_id" value="Country" />
+                            <InputLabel for="business_id" value="Business" />
 
-                            <select @change="getStates()" class="form-input w-full" name="country_id" id="country_id" v-model="form.country_id">
-                                <option value="">Select the country</option>
-                                <option v-for="(country, index) in countries" :key="index" :value="country.id">{{ country.name }}</option>
+                            <select
+                                class="form-input w-full"
+                                name="business_id"
+                                id="business_id"
+                                v-model="form.business_id"
+                            >
+                                <option value="">Select the business</option>
+                                <option
+                                    v-for="(busin, index) in businesses"
+                                    :key="index"
+                                    :value="busin.id"
+                                >
+                                    {{ busin.name }}
+                                </option>
                             </select>
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.country_id"
+                                :message="form.errors.business_id"
                             />
                         </div>
 
                         <div>
-                            <InputLabel for="state_id" value="State" />
+                            <InputLabel for="plan_id" value="Plan" />
 
-                            <select @change="getCities()" class="form-input w-full" name="state_id" id="state_id" v-model="form.state_id">
-                                <option value="">Select the state</option>
-                                <option v-for="(state, index) in states" :key="index" :value="state.id">{{ state.name }}</option>
+                            <select
+                                class="form-input w-full"
+                                name="plan_id"
+                                id="plan_id"
+                                v-model="form.plan_id"
+                            >
+                                <option value="">Select the plan</option>
+                                <option
+                                    v-for="(plan, index) in plans"
+                                    :key="index"
+                                    :value="plan.id"
+                                >
+                                    {{ plan.name }}
+                                </option>
                             </select>
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.state_id"
+                                :message="form.errors.plan_id"
                             />
                         </div>
 
-                        <div>
-                            <InputLabel for="city_id" value="City" />
+                        <div class=" col-span-2">
+                            <InputLabel for="billing_cycle" value="Billing Cycle" />
 
-                            <select class="form-input w-full" name="city_id" id="city_id" v-model="form.city_id">
-                                <option value="">Select the city</option>
-                                <option v-for="(city, index) in cities" :key="index" :value="city.id">{{ city.name }}</option>
+                            <select
+                                class="form-input w-full"
+                                name="billing_cycle"
+                                id="billing_cycle"
+                                v-model="form.billing_cycle"
+                            >
+                                <option value="">Select</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="semiannually">Semiannually</option>
+                                <option value="yearly">Yearly</option>
                             </select>
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.state_id"
+                                :message="form.errors.billing_cycle"
                             />
                         </div>
 
+                      
+                            <div>
+                                <InputLabel for="start_date" value="Start Date" />
+
+                                <TextInput
+                                    id="start_date"
+                                    type="date"
+                                    class="mt-1 block w-full"
+                                    v-model="form.start_date"
+                                />
+
+                                <InputError
+                                    class="mt-2"
+                                    :message="form.errors.start_date"
+                                />
+                            </div>
+
+                            <div>
+                                <InputLabel for="end_date" value="End Date" />
+
+                                <TextInput
+                                    id="end_date"
+                                    type="date"
+                                    class="mt-1 block w-full"
+                                    v-model="form.end_date"
+                                />
+
+                                <InputError
+                                    class="mt-2"
+                                    :message="form.errors.end_date"
+                                />
+                            </div>
+
                         <div>
-                            <InputLabel for="address" value="Address" />
-
-                            <TextInput
-                                id="address"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.address"
-                            />
-
+                            <InputLabel for="status" value="Status" />
+                            <select
+                                class="form-input w-full"
+                                name="status"
+                                id="status"
+                                v-model="form.status"
+                            >
+                                <option value="">Select</option>
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="canceled">Canceled</option>
+                                <option value="past_due">Past Due</option>
+                            </select>
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.address"
+                                :message="form.errors.status"
                             />
                         </div>
 
                         <div>
                             <InputLabel for="active" value="Active" />
-                            <Toggle :status="form.active" @click="form.active = !form.active"/>
-                            <InputError class="mt-2" :message="form.errors.active" />
+                            <Toggle
+                                :status="form.active"
+                                @click="form.active = !form.active"
+                            />
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.active"
+                            />
                         </div>
-                       
+
                         <div class="flex items-center gap-4">
-                            <PrimaryButton :disabled="form.processing" @click="submitForm()"
+                            <PrimaryButton
+                                :disabled="form.processing"
+                                @click="submitForm()"
                                 >Save</PrimaryButton
                             >
 
@@ -273,7 +267,6 @@ onMounted(() => {
                                 </p>
                             </Transition>
                         </div>
-
                     </div>
                 </div>
             </div>
