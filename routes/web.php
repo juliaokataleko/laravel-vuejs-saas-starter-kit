@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -30,6 +31,11 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+
+    if (auth()->user()->level == 'admin') {
+        return redirect(route('saasDashboard'));
+    }
+
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -57,6 +63,8 @@ Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('plans', PlanController::class);
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('payments', PaymentController::class);
+
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('saasDashboard');
 });
 
 require __DIR__.'/auth.php';

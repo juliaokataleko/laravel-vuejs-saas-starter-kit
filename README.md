@@ -5,6 +5,7 @@
 -   Laravel Spatie Roles and Permissions - https://spatie.be/docs/laravel-permission/v6/introduction
 -   Laravel Spatie Activity Logs - https://spatie.be/docs/laravel-activitylog/v4/introduction
 -   Laravel Welcome Notification - https://github.com/spatie/laravel-welcome-notification
+- Laravel Trend for stats - https://github.com/Flowframe/laravel-trend
 
 ## NPM packages
 
@@ -12,3 +13,4 @@
 -   Vue-multiselect - https://vue-multiselect.js.org/#sub-getting-started
 -   V-Money - https://www.npmjs.com/package/v-money
 -   Vue The Mask - https://github.com/vuejs-tips/vue-the-mask
+- Vuejs Chart - https://vue-chartjs.org/guide/

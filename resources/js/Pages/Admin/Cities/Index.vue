@@ -66,7 +66,7 @@ const deleteRecord = (id) => {
                             <tbody>
                                 <tr>
                                     <td
-                                        colspan="3"
+                                        colspan="6"
                                         v-if="cities.data.length == 0"
                                     >
                                         There is no records yet. Start adding.
