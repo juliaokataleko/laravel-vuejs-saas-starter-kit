@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
+    public function countries() {
+        return response()->json(Country::select('id', 'name')->get());
+    }
+
     public function states(Country $country) {
         return response()->json($country->states);
     }

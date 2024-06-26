@@ -12,8 +12,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->name('api.')->group(function () {
-    Route::get('country/{country}/states', [LocationController::class, 'states'])->name('countryStates');
-    Route::get('state/{state}/cities', [LocationController::class, 'cities'])->name('stateCities');
+    Route::get('countries', [LocationController::class, 'countries'])->name('countries');
+    Route::get('countries/{country}/states', [LocationController::class, 'states'])->name('countryStates');
+    Route::get('states/{state}/cities', [LocationController::class, 'cities'])->name('stateCities');
 
     Route::apiResource('businesses', BusinessController::class);
     Route::apiResource('plans', PlanController::class);
