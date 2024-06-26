@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SubscriptionRequest;
+use App\Models\Payment;
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -61,7 +63,27 @@ class SubscriptionController extends Controller
      */
     public function edit(Subscription $subscription)
     {
-        return Inertia::render('Admin/Subscriptions/Form', compact('subscription'));
+        $payment = new Payment();
+        $payment->subscription_id = $subscription->id;
+        $payment->amount = $subscription->amount;
+
+        // start date
+        $lastPayment = Payment::whereSubscriptionId($subscription->id)->orderBy('id', 'desc')->first();
+        if ($lastPayment) {
+            $start_date = date('Y-m-d', strtotime( $lastPayment->end_date . ' +1 day'));
+            $payment->start_date = $start_date;
+        } else {
+            $start_date = $start_date = date('Y-m-d', strtotime($subscription->start_date . ' +1 day')); 
+            $payment->start_date = $start_date;
+        }
+
+        // end date
+        if ($subscription->billing_cycle == 'monthly') $payment->end_date = date('Y-m-d', strtotime($start_date . ' +1 month'));
+        else if ($subscription->billing_cycle == 'quarterly') $payment->end_date = date('Y-m-d', strtotime($start_date . ' +3 months'));
+        else if ($subscription->billing_cycle == 'semiannually') $payment->end_date = date('Y-m-d', strtotime($start_date . ' +6 months'));
+        else if ($subscription->billing_cycle == 'yearly') $payment->end_date = date('Y-m-d', strtotime($start_date . ' +1 year'));
+
+        return Inertia::render('Admin/Subscriptions/Form', compact('subscription', 'payment'));
     }
 
     /**

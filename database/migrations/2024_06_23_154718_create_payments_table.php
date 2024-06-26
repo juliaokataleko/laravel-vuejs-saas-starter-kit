@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('subscription_id')->constrained()->cascadeOnDelete();
             $table->enum('payment_method', ['credit_card', 'debit_card', 'deposit', 'paypal', 'cash', 'other'])->default('cash');
             $table->decimal('amount');
+            $table->timestamp('start_date');
+            $table->timestamp('end_date')->nullable();
             $table->enum('status', ['succeeded', 'canceled', 'failed'])->default('succeeded');
             $table->softDeletes();
             $table->timestamps();

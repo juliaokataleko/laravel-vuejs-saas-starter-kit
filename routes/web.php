@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\RoleController;
@@ -48,6 +49,7 @@ Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('businesses', BusinessController::class);
     Route::resource('plans', PlanController::class);
     Route::resource('subscriptions', SubscriptionController::class);
+    Route::resource('payments', PaymentController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -11,7 +11,7 @@ class PaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'subscription_id' => ['required', 'numeric'],
+            'amount' => ['required'],
+            'status' => ['required'],
+            'payment_method' => ['required', 'string'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['nullable', 'date', 'after:start_date']
         ];
     }
 }

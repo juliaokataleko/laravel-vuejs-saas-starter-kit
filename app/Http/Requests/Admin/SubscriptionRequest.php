@@ -32,7 +32,7 @@ class SubscriptionRequest extends FormRequest
             'status' => ['required'],
             'active' => ['nullable'],
             'start_date' => ['required', 'date'],
-            'end_date' => ['nullable', 'date']
+            'end_date' => ['nullable', 'date', 'after:start_date']
         ];
     }
 

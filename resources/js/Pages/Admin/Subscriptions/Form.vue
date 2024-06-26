@@ -13,12 +13,17 @@ import Textarea from "@/Components/Textarea.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import PaymentForm from "./Partials/PaymentForm.vue";
 
 const props = defineProps({
     subscription: {
         type: Object,
         default: () => ({}),
     },
+    payment: {
+        type: Object,
+        default: () => ({}),
+    }
 });
 
 const businesses = ref([]);
@@ -60,7 +65,6 @@ const submitForm = () => {
 };
 
 onMounted(() => {
-    console.log("Yeahhhh");
     getBusinesses();
     getPlans();
 });
@@ -90,7 +94,8 @@ onMounted(() => {
         </template>
 
         <div class="">
-            <div class="space-y-4">
+            <div class="space-y-6">
+
                 <div class="shadow-md p-4 rounded-lg bg-white">
                     <div class="grid grid-cols-2 gap-5">
                         <!-- <div>
@@ -269,6 +274,11 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
+
+                <div class="shadow-md p-4 rounded-lg bg-white">
+                    <PaymentForm :payment="payment" />
+                </div>
+
             </div>
         </div>
     </SidebarLayout>
