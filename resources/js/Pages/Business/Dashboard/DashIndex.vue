@@ -54,14 +54,14 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Business Dashboard" />
 
     <SidebarLayout>
         <template #header>
 
             <div class="flex items-center justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Saas Dashboard
+                    Business Dashboard
                 </h2>
                 <div>
                     <!-- <Link :href="route('permissions.create')" class="uppercase">

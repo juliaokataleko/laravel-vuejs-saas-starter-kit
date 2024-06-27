@@ -52,14 +52,15 @@ class UserController extends Controller
         $data['password'] = bcrypt(uniqid());
 
         $user = User::query()->create($data);
+        $authUser = ModelsUser::find($user->id);
 
         $expiresAt = now()->addDay();
-        $user->sendWelcomeNotification($expiresAt);
+        $authUser->sendWelcomeNotification($expiresAt);
 
         if(request('role')) {
             $role = Role::findOrFail(request('role'));
 
-            $authUser = ModelsUser::find($user->id);
+            
             $authUser->assignRole($role);
         }
 
