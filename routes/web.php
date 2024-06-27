@@ -20,6 +20,10 @@ use Inertia\Inertia;
 
 use Spatie\WelcomeNotification\WelcomesNewUsers;
 use App\Http\Controllers\Auth\MyWelcomeController;
+use App\Http\Controllers\Business\DashboardController as BusinessDashboardController;
+use App\Http\Controllers\Business\SettingController;
+use App\Http\Middleware\HasBusiness;
+use App\Http\Middleware\Manager;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -34,6 +38,10 @@ Route::get('/dashboard', function () {
 
     if (auth()->user()->level == 'admin') {
         return redirect(route('saasDashboard'));
+    }
+
+    if (auth()->user()->level != 'admin') {
+        return redirect(route('business.dashboard'));
     }
 
     return Inertia::render('Dashboard');
@@ -54,17 +62,20 @@ Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('countries', CountryController::class);
     Route::resource('states', StateController::class);
     Route::resource('cities', CityController::class);
-
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
-    Route::resource('users', UserController::class);
     Route::resource('logs', LogController::class);
     Route::resource('businesses', BusinessController::class);
     Route::resource('plans', PlanController::class);
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('payments', PaymentController::class);
-
     Route::get('dashboard', [DashboardController::class, 'index'])->name('saasDashboard');
+});
+
+Route::middleware(['auth', HasBusiness::class])->prefix('business')->name('business.')->group(function () {
+    Route::resource('users', UserController::class);
+    Route::resource('settings', SettingController::class)->middleware(Manager::class);
+    Route::get('dashboard', [BusinessDashboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

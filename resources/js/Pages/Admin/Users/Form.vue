@@ -36,11 +36,11 @@ const form = useForm({
 const submitForm = () => {
 
     if (props.user.id) {
-        form.put(route('users.update', props.user.id))
+        form.put(route('business.users.update', props.user.id))
         return
     }
 
-    form.post(route('users.store'))
+    form.post(route('business.users.store'))
 }
 </script>
 
@@ -56,7 +56,7 @@ const submitForm = () => {
                     {{ user.id ? "Edit user" : "Add user" }}
                 </h2>
                 <div>
-                    <Link :href="route('users.index')" class="uppercase"
+                    <Link :href="route('business.users.index')" class="uppercase"
                         ><BigBackIcon /></Link
                     >
                 </div>
@@ -104,7 +104,7 @@ const submitForm = () => {
                             />
                         </div>
 
-                        <div>
+                        <div v-if="$page.props.auth.user.level == 'admin'">
                             <InputLabel for="business_id" value="Business" />
 
                             <select class="form-input w-full" name="business_id" id="business_id" v-model="form.business_id">

@@ -22,7 +22,7 @@ const deleteForm = useForm({});
 
 const deleteRecord = (id) => {
     if (confirm("Are you sure?")) {
-        deleteForm.delete(route("users.destroy", id));
+        deleteForm.delete(route("business.users.destroy", id));
     }
 };
 </script>
@@ -38,7 +38,7 @@ const deleteRecord = (id) => {
                     Users
                 </h2>
                 <div>
-                    <Link :href="route('users.create')" class="uppercase">
+                    <Link :href="route('business.users.create')" class="uppercase">
                         <BigPlusIcon />
                     </Link>
                 </div>
@@ -82,7 +82,7 @@ const deleteRecord = (id) => {
                                         <div class="space-x-2">
                                             <Link
                                                 :href="
-                                                    route('users.edit', user.id)
+                                                    route('business.users.edit', user.id)
                                                 "
                                             >
                                                 <PrimaryButton>

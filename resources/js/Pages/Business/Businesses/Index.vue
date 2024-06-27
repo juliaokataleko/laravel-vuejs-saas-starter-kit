@@ -10,20 +10,9 @@ import EditIcon from "@/Components/Icons/EditIcon.vue";
 import DeleteIcon from "@/Components/Icons/DeleteIcon.vue";
 import BigPlusIcon from "@/Components/Icons/BigPlusIcon.vue";
 import Toggle from "@/Components/Toggle.vue";
-import { VMoney } from 'v-money';
-import { ref } from "vue";
-
-const money = ref({
-   decimal: ',',
-   thousands: '.',
-   prefix: '$ ',
-   // suffix: ' #',
-   precision: 2,
-   masked: true
-})
 
 const props = defineProps({
-    subscriptions: {
+    businesses: {
         type: Object,
         default: () => ({}),
     },
@@ -33,23 +22,23 @@ const deleteForm = useForm({});
 
 const deleteRecord = (id) => {
     if (confirm("Are you sure?")) {
-        deleteForm.delete(route("subscriptions.destroy", id));
+        deleteForm.delete(route("businesses.destroy", id));
     }
 };
 </script>
 
 <template>
-    <Head title="Subscriptions" />
+    <Head title="Businesses" />
 
     <SidebarLayout>
         <template #header>
 
             <div class="flex items-center justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Subscriptions
+                    Businesses
                 </h2>
                 <div>
-                    <Link :href="route('subscriptions.create')" class="uppercase">
+                    <Link :href="route('businesses.create')" class="uppercase">
                         <BigPlusIcon />
                     </Link>
                 </div>
@@ -66,11 +55,9 @@ const deleteRecord = (id) => {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Plan</th>
-                                    <td>Business</td>
-                                    <th>Amount</th>
-                                    <th>Start Date</th>
-                                    <th>End date</th>
+                                    <th>Name</th>
+                                    <td>Doc Number</td>
+                                    <th>Slug</th>
                                     <th>Active</th>
                                     <th></th>
                                 </tr>
@@ -80,31 +67,27 @@ const deleteRecord = (id) => {
                                 <tr>
                                     <td
                                         colspan="6"
-                                        v-if="subscriptions.data.length == 0"
+                                        v-if="businesses.data.length == 0"
                                     >
                                         There is no records yet. Start adding.
                                     </td>
                                 </tr>
 
                                 <tr
-                                    v-for="(subscription, index) in subscriptions.data"
+                                    v-for="(business, index) in businesses.data"
                                     :key="index"
                                 >
-                                    <td>{{ subscription.id }}</td>
-                                    <td>{{ subscription.plan?.name }}</td>
-                                    <td>{{ subscription.business?.name }}</td>
+                                    <td>{{ business.id }}</td>
+                                    <td>{{ business.name }}</td>
+                                    <td>{{ business.doc }}</td>
+                                    <td>{{ business.slug }}</td>
                                     <td>
-                                        <input type="text" disabled class=" border border-gray-50 p-1 rounded-md " v-model="subscription.amount"  v-money="money">
-                                    </td>
-                                    <td>{{ subscription.start_date }}</td>
-                                    <td>{{ subscription.end_date }}</td>
-                                    <td>
-                                        <Toggle :status="subscription.active" />
+                                        <Toggle :status="business.active" />
                                     </td>
                                     <td>
                                         <div class="space-x-2">
                                             <Link
-                                                :href="route('subscriptions.edit', subscription.id)"
+                                                :href="route('businesses.edit', business.id)"
                                             >
                                                 <PrimaryButton>
                                                     <EditIcon />
@@ -112,7 +95,7 @@ const deleteRecord = (id) => {
                                             </Link>
 
                                             <DangerButton
-                                                @click="deleteRecord(subscription.id)"
+                                                @click="deleteRecord(business.id)"
                                             >
                                                 <DeleteIcon />
                                             </DangerButton>
@@ -124,7 +107,7 @@ const deleteRecord = (id) => {
                     </div>
 
                     <div>
-                        <pagination class="mt-2" :links="subscriptions.links" />
+                        <pagination class="mt-2" :links="businesses.links" />
                     </div>
                 </div>
             </div>

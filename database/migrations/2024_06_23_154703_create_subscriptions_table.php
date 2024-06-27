@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('start_date');
             $table->timestamp('end_date')->nullable();
             $table->boolean('active')->default(true);   
+            $table->boolean('is_trial')->default(false);   
             $table->softDeletes();
             $table->timestamps();
         });

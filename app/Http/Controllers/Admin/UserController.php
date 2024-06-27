@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\Business;
-use App\Models\User;
+use App\Models\Business\User;
+use App\Models\User as ModelsUser;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -57,7 +58,9 @@ class UserController extends Controller
 
         if(request('role')) {
             $role = Role::findOrFail(request('role'));
-            $user->assignRole($role);
+
+            $authUser = ModelsUser::find($user->id);
+            $authUser->assignRole($role);
         }
 
         activity()
@@ -65,7 +68,7 @@ class UserController extends Controller
         ->performedOn($user)
         ->log('Created a user');
 
-        return redirect(route('users.index'))->with('success', 'User created');
+        return redirect(route('business.users.index'))->with('success', 'User created');
     }
 
     /**
@@ -77,8 +80,9 @@ class UserController extends Controller
         $businesses = Business::select('id', 'name')->orderBy('name', 'asc')->get();
 
         $user->role = null;
-        if (count($user->roles) > 0) {
-            $user->role = $user->roles[0]->id;
+        $authUser = ModelsUser::find($user->id);
+        if (count($authUser->roles) > 0) {
+            $user->role = $authUser->roles[0]->id;
         }
 
         return Inertia::render('Admin/Users/Form', compact('user', 'roles', 'businesses'));
@@ -93,8 +97,10 @@ class UserController extends Controller
         $businesses = Business::select('id', 'name')->orderBy('name', 'asc')->get();
 
         $user->role = null;
-        if (count($user->roles) > 0) {
-            $user->role = $user->roles[0]->id;
+
+        $authUser = ModelsUser::find($user->id);
+        if (count($authUser->roles) > 0) {
+            $user->role = $authUser->roles[0]->id;
         }
 
         return Inertia::render('Admin/Users/Form', compact('user', 'roles', 'businesses'));
@@ -108,11 +114,12 @@ class UserController extends Controller
         $data = $request->validated();
         $user->update($data);
 
-        $user->syncRoles([]);
+        $authUser = ModelsUser::find($user->id);
+        $authUser->syncRoles([]);
 
         if(request('role')) {
             $role = Role::findOrFail(request('role'));
-            $user->assignRole($role);
+            $authUser->assignRole($role);
         }
 
         activity()
@@ -120,7 +127,7 @@ class UserController extends Controller
         ->performedOn($user)
         ->log('Updated a user');
 
-        return redirect(route('users.index'))->with('success', 'User updated');
+        return redirect(route('business.users.index'))->with('success', 'User updated');
     }
 
     /**
@@ -128,6 +135,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $authUser = ModelsUser::find($user->id);
+        $authUser->syncRoles([]);
+        
         $user->delete();
 
         activity()
@@ -135,6 +145,6 @@ class UserController extends Controller
         ->performedOn($user)
         ->log('Deleted a user');
 
-        return redirect(route('users.index'))->with('success', 'User deleted');
+        return redirect(route('business.users.index'))->with('success', 'User deleted');
     }
 }
