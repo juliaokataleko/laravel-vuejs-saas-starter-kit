@@ -71,7 +71,12 @@ class SubscriptionController extends Controller
     public function show(string $id)
     {
         $subscription = Subscription::whereBusinessId(auth()->user()->business_id)->whereId($id)->first();
-        return Inertia::render('Business/Subscriptions/Form', compact('subscription'));
+
+        $payment = Payment::whereSubscriptionId($subscription->id)->first() ?? new Payment;
+        $payment->subscription_id = $subscription->id;
+        $payment->amount = $subscription->amount;
+
+        return Inertia::render('Business/Subscriptions/Form', compact('subscription', 'payment'));
     }
 
     /**
@@ -80,7 +85,6 @@ class SubscriptionController extends Controller
     public function edit(string $id)
     {
         $subscription = Subscription::whereBusinessId(auth()->user()->business_id)->whereId($id)->first();
-
         $payment = Payment::whereSubscriptionId($subscription->id)->first() ?? new Payment;
         $payment->subscription_id = $subscription->id;
         $payment->amount = $subscription->amount;

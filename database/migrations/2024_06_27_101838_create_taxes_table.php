@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('taxes', function (Blueprint $table) {
             $table->id();
+            $table->integer('employee_id')->nullable();
+            $table->foreignId('country_id')->nullable()->constrained();
+            $table->string('name');
+            $table->decimal('rate');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

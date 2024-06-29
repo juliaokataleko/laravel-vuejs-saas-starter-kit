@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TaxRequest;
 use App\Models\Tax;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TaxController extends Controller
 {
@@ -13,7 +15,13 @@ class TaxController extends Controller
      */
     public function index()
     {
-        //
+        $taxes = Tax::paginate(10);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->log('Listed taxes');
+
+        return Inertia::render('Admin/Taxes/Index', compact('taxes'));
     }
 
     /**
@@ -21,15 +29,24 @@ class TaxController extends Controller
      */
     public function create()
     {
-        //
+        $tax = new Tax();
+        return Inertia::render('Admin/Taxes/Form', compact('tax'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TaxRequest $request)
     {
-        //
+        $data = $request->validated();
+        $tax = Tax::query()->create($data);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($tax)
+        ->log('Created a tax');
+
+        return redirect(route('taxes.index'))->with('success', 'Tax created');
     }
 
     /**
@@ -37,7 +54,7 @@ class TaxController extends Controller
      */
     public function show(Tax $tax)
     {
-        //
+        return Inertia::render('Admin/Taxes/Form', compact('tax'));
     }
 
     /**
@@ -45,15 +62,23 @@ class TaxController extends Controller
      */
     public function edit(Tax $tax)
     {
-        //
+        return Inertia::render('Admin/Taxes/Form', compact('tax'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tax $tax)
+    public function update(TaxRequest $request, Tax $tax)
     {
-        //
+        $data = $request->validated();
+        $tax->update($data);
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($tax)
+        ->log('Updated a tax');
+
+        return redirect(route('taxes.index'))->with('success', 'Tax Updated');
     }
 
     /**
@@ -61,6 +86,7 @@ class TaxController extends Controller
      */
     public function destroy(Tax $tax)
     {
-        //
+        $tax->delete();
+        return redirect(route('taxes.index'))->with('success', 'Tax Updated');
     }
 }

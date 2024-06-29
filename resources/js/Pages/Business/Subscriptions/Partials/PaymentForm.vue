@@ -6,6 +6,7 @@ import InputError from "@/Components/InputError.vue";
 import { useForm } from "@inertiajs/vue3";
 import { VMoney } from 'v-money';
 import { ref } from "vue";
+import { onMounted } from "vue";
 
 const money = ref({
    decimal: ',',
@@ -31,11 +32,15 @@ const form = useForm({
     amount: props.payment.amount,
     payment_method: props.payment.payment_method,
     status: props.payment.status,
+    image: "",
 })
 
 const submitForm = () => {
     if (props.payment.id) {
-        form.put(route("business.payments.update", props.payment.id));
+        form.post(route("business.payments.update", {
+            payment: props.payment.id,
+            _method: 'put'
+        }));
         return;
     }
 
@@ -44,6 +49,43 @@ const submitForm = () => {
         }
     });
 };
+
+const imageUrl = ref(props.payment.image)
+const imageId = ref("")
+
+const setImage = (e) => {
+    const file = e.target.files[0];
+    imageUrl.value = URL.createObjectURL(file);
+    form.image = e.target.files[0]
+}
+
+const clearImage = () => {
+
+    if (imageId.value) {
+
+        if (confirm("Tem certeza?")) {
+            deleteForm.id = imageId.value,
+            deleteForm.delete(route('files.destroy', imageId.value))
+
+            form.image = ""
+            imageUrl.value = ""
+        }
+
+    } else {
+        form.image = ""
+        imageUrl.value = ""
+    }
+}
+
+const deleteForm = useForm({
+    id: ""
+})
+
+onMounted(() => {
+    if (props.payment.media.length == 1) {
+        imageId.value = props.payment.media[0].id
+    }
+});
 
 </script>
 
@@ -101,6 +143,25 @@ const submitForm = () => {
 
             <InputError class="mt-2" :message="form.errors.amount" />
         </div>
+
+
+        <div class="col-span-2">Payment receive</div>
+        <div class="border border-gray-200 rounded-xl p-3 hover:bg-gray-100 transition-all duration-200 flex items-center space-x-3 col-span-2">
+            
+            
+            <img v-if="imageUrl" :src="imageUrl" class="h-20 w-20 md:w-40 md:h-40 object-cover rounded-full bg-white"  id="profileImage" alt="">
+            <div>
+                <label for="image" class="cursor-pointer text-lg">
+                    <input @change="setImage" type="file" name="image" id="image" accept="" class="hidden">
+                    Select an image
+                </label>
+
+                <div>
+                    <button v-if="imageId || (form.image)" @click="clearImage" class=" border-2 border-red-500 rounded-lg p-1 px-5">X</button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- <div>
             <InputLabel for="status" value="Status" />

@@ -13,6 +13,8 @@ import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { VMoney } from 'v-money';
 import { ref } from "vue";
+import Image from "@/Components/Payment/Image.vue"
+import ImageView from "@/Components/ImageView.vue";
 
 const money = ref({
    decimal: ',',
@@ -67,6 +69,7 @@ const deleteRecord = (id) => {
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th></th>
                                     <th>Subscription</th>
                                     <th>Amount</th>
                                     <th>Status</th>
@@ -79,7 +82,7 @@ const deleteRecord = (id) => {
                             <tbody>
                                 <tr>
                                     <td
-                                        colspan="6"
+                                        colspan="7"
                                         v-if="payments.data.length == 0"
                                     >
                                         There is no records yet. Start adding.
@@ -91,6 +94,9 @@ const deleteRecord = (id) => {
                                     :key="index"
                                 >
                                     <td>{{ payment.id }}</td>
+                                    <td>
+                                        <ImageView v-if="payment.image" :image-src="payment.image" :rounded="true" />    
+                                    </td>
                                     <td>{{ payment.subscription.id }} - {{ payment.subscription.business.name }}</td>
                                     
                                     <td>

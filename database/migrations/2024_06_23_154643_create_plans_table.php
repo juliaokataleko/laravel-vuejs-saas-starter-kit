@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->json('features')->nullable();
             $table->boolean('is_free')->default(false);
-
+            $table->boolean('is_public')->default(true);
             $table->decimal('monthly_price')->default(0);    
             $table->decimal('quarterly_price')->default(0);   
             $table->decimal('semiannually_price')->default(0);   

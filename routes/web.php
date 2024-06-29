@@ -4,13 +4,17 @@ use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\FeatureController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\Admin;
@@ -24,17 +28,22 @@ use App\Http\Controllers\Business\DashboardController as BusinessDashboardContro
 use App\Http\Controllers\Business\PaymentController as BusinessPaymentController;
 use App\Http\Controllers\Business\SettingController;
 use App\Http\Controllers\Business\SubscriptionController as BusinessSubscriptionController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Middleware\HasBusiness;
 use App\Http\Middleware\Manager;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// });
+
+Route::get('', [WebsiteController::class, 'index'])->name('home');
+Route::get('/contact', [WebsiteController::class, 'contact'])->name('contact');
 
 Route::get('/dashboard', function () {
 
@@ -60,6 +69,8 @@ Route::group(['middleware' => ['web', WelcomesNewUsers::class,]], function () {
     Route::post('welcome/{user}', [MyWelcomeController::class, 'savePassword']);
 });
 
+Route::resource("files", FileController::class);
+
 Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('countries', CountryController::class);
     Route::resource('states', StateController::class);
@@ -72,6 +83,11 @@ Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('payments', PaymentController::class);
     Route::get('dashboard', [DashboardController::class, 'index'])->name('saasDashboard');
+
+    Route::resource('taxes', TaxController::class);
+    Route::resource('payment-methods', PaymentMethodController::class);
+    Route::resource('faqs', FaqController::class);
+    Route::resource('features', FeatureController::class);
 });
 
 Route::middleware(['auth', HasBusiness::class])->prefix('business')->name('business.')->group(function () {

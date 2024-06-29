@@ -32,6 +32,7 @@ class PaymentController extends Controller
     {
         $data = $request->validated();
         $payment = Payment::query()->create($data);
+        $payment->processImageUpload();
 
         // @TODO process in payment gateway like paypal, credit card
 
@@ -62,9 +63,24 @@ class PaymentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PaymentRequest $request, string $id)
     {
-        //
+        $payment = Payment::findOrFail($id);
+
+        $data = $request->validated();
+        $payment->update($data);
+
+        // process updload
+        $payment->processImageUpload();
+
+        // @TODO process in payment gateway like paypal, credit card
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($payment)
+        ->log('Updated a payment');
+
+        return  redirect(route('business.payments.index'))->with('success', 'Your payment was updated. We are processing it.');
     }
 
     /**
@@ -72,6 +88,6 @@ class PaymentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $payment = Payment::findOrFail($id);
     }
 }

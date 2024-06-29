@@ -26,6 +26,7 @@ class PlanRequest extends FormRequest
             'name' => ['required', 'string'],
             'active' => ['nullable'],
             'is_free' => ['nullable'],
+            'is_public' => ['nullable'],
             'description' => ['nullable'],
             'features' => ['nullable', 'array'],
             'monthly_price' => ['nullable'],
@@ -39,10 +40,6 @@ class PlanRequest extends FormRequest
     {
         $validated = $this->validator->validated();
         $validated['slug'] = Str::slug($validated['name']);
-
-        if (!isset($validated['features'])) {
-            // $validated['features'] = json_encode([]);
-        }
 
         return $validated;
     }

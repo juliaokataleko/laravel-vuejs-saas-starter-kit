@@ -6,6 +6,7 @@ import InputError from "@/Components/InputError.vue";
 import { useForm } from "@inertiajs/vue3";
 import { VMoney } from 'v-money';
 import { ref } from "vue";
+import { onMounted } from "vue";
 
 const money = ref({
    decimal: ',',
@@ -31,28 +32,67 @@ const form = useForm({
     amount: props.payment.amount,
     payment_method: props.payment.payment_method,
     status: props.payment.status,
+    image: "",
 })
 
 const submitForm = () => {
     if (props.payment.id) {
-        form.put(route("payments.update", props.payment.id));
+        form.post(route("payments.update", {
+            payment: props.payment.id,
+            _method: 'put'
+        }));
         return;
     }
 
     form.post(route("payments.store"), {
         onSuccess: () => {
-            // alert("Payment saved")
-            // window.location.href = route('subscriptions.edit', payment.subscription_id)
         }
     });
 };
+
+const imageUrl = ref(props.payment.image)
+const imageId = ref("")
+
+const setImage = (e) => {
+    const file = e.target.files[0];
+    imageUrl.value = URL.createObjectURL(file);
+    form.image = e.target.files[0]
+}
+
+const clearImage = () => {
+
+    if (imageId.value) {
+
+        if (confirm("Tem certeza?")) {
+            deleteForm.id = imageId.value,
+            deleteForm.delete(route('files.destroy', imageId.value))
+
+            form.image = ""
+            imageUrl.value = ""
+        }
+
+    } else {
+        form.image = ""
+        imageUrl.value = ""
+    }
+}
+
+const deleteForm = useForm({
+    id: ""
+})
+
+onMounted(() => {
+    if (props.payment.media.length == 1) {
+        imageId.value = props.payment.media[0].id
+    }
+});
 
 </script>
 
 <template>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <div class="text-lg font-bold col-span-1 md:col-span-2">Payment Form</div>
+        <div class="text-lg font-bold col-span-1 md:col-span-2">Subscription Payment</div>
 
         <div class="font-bold col-span-1 md:col-span-2">
             <InputLabel for="payment_method" value="Payment Method" />
@@ -104,6 +144,25 @@ const submitForm = () => {
             <InputError class="mt-2" :message="form.errors.amount" />
         </div>
 
+
+        <div class="col-span-2">Payment receive</div>
+        <div class="border border-gray-200 rounded-xl p-3 hover:bg-gray-100 transition-all duration-200 flex items-center space-x-3 col-span-2">
+            
+            
+            <img v-if="imageUrl" :src="imageUrl" class="h-20 w-20 md:w-40 md:h-40 object-cover rounded-full bg-white"  id="profileImage" alt="">
+            <div>
+                <label for="image" class="cursor-pointer text-lg">
+                    <input @change="setImage" type="file" name="image" id="image" accept="" class="hidden">
+                    Select an image
+                </label>
+
+                <div>
+                    <button v-if="imageId || (form.image)" @click="clearImage" class=" border-2 border-red-500 rounded-lg p-1 px-5">X</button>
+                </div>
+            </div>
+        </div>
+
+
         <div>
             <InputLabel for="status" value="Status" />
 
@@ -149,7 +208,7 @@ const submitForm = () => {
             <InputError class="mt-2" :message="form.errors.end_date" />
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 col-span-2">
             <PrimaryButton
                 :disabled="form.processing"
                 @click="submitForm()"

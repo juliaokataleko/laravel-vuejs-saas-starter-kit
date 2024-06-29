@@ -41,6 +41,7 @@ const form = useForm({
     annually_price: props.plan.annually_price,
 
     is_free: props.plan.is_free,
+    is_public: props.plan.is_public,
     active: props.plan.active,
 });
 
@@ -249,6 +250,12 @@ const removeFeature = (item) => {
                                 class="mt-2"
                                 :message="form.errors.description"
                             />
+                        </div>
+
+                        <div>
+                            <InputLabel for="is_public" value="Is Public" />
+                            <Toggle :status="form.is_public" @click="form.is_public = !form.is_public"/>
+                            <InputError class="mt-2" :message="form.errors.is_public" />
                         </div>
 
                         <div>
