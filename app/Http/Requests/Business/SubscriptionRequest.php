@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests\Business;
 
 use App\Models\Business;
 use App\Models\Plan;
-use App\Models\Subscription;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SubscriptionRequest extends FormRequest
@@ -24,14 +23,12 @@ class SubscriptionRequest extends FormRequest
      */
     public function rules(): array
     {
+        // dd(request()->all());
         return [
-            'business_id' => ['required', 'numeric'],
             'plan_id' => ['required', 'numeric'],
             'billing_cycle' => ['required'],
             // 'amount' => ['required'],
-            'status' => ['required'],
-            'active' => ['nullable'],
-            'is_trial' => ['nullable'],
+            // 'status' => ['required'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date']
         ];
@@ -40,7 +37,8 @@ class SubscriptionRequest extends FormRequest
     public function validated($key = null, $default = null)
     {
         $validated = $this->validator->validated();
-        $validated['user_id'] = Business::find($validated['business_id'])?->user_id;
+        $validated['business_id'] = auth()->user()->business_id;
+        $validated['user_id'] = auth()->id();
 
         $amount = 0.00;
         $plan =  Plan::find($validated['plan_id']);
@@ -56,5 +54,4 @@ class SubscriptionRequest extends FormRequest
 
         return $validated;
     }
-
 }

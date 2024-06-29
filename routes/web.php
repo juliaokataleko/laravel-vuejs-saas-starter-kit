@@ -21,7 +21,9 @@ use Inertia\Inertia;
 use Spatie\WelcomeNotification\WelcomesNewUsers;
 use App\Http\Controllers\Auth\MyWelcomeController;
 use App\Http\Controllers\Business\DashboardController as BusinessDashboardController;
+use App\Http\Controllers\Business\PaymentController as BusinessPaymentController;
 use App\Http\Controllers\Business\SettingController;
+use App\Http\Controllers\Business\SubscriptionController as BusinessSubscriptionController;
 use App\Http\Middleware\HasBusiness;
 use App\Http\Middleware\Manager;
 
@@ -75,6 +77,8 @@ Route::middleware(['auth', Admin::class])->prefix('saas')->group(function () {
 Route::middleware(['auth', HasBusiness::class])->prefix('business')->name('business.')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class)->middleware(Manager::class);
+    Route::resource('subscriptions', BusinessSubscriptionController::class)->middleware(Manager::class);
+    Route::resource('payments', BusinessPaymentController::class)->middleware(Manager::class);
     Route::get('dashboard', [BusinessDashboardController::class, 'index'])->name('dashboard');
 });
 

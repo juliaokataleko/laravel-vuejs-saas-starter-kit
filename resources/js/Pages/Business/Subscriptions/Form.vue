@@ -14,6 +14,16 @@ import Toggle from "@/Components/Toggle.vue";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import PaymentForm from "./Partials/PaymentForm.vue";
+import { VMoney } from 'v-money';
+
+const money = ref({
+   decimal: ',',
+   thousands: '.',
+   prefix: '$ ',
+   // suffix: ' #',
+   precision: 2,
+   masked: true
+})
 
 const props = defineProps({
     subscription: {
@@ -46,10 +56,10 @@ const getPlans = () => {
 };
 
 const form = useForm({
-    business_id: props.subscription.business_id,
     plan_id: props.subscription.plan_id,
     billing_cycle: props.subscription.billing_cycle,
     active: props.subscription.active,
+    amount: props.subscription.amount,
     status: props.subscription.status,
     is_trial: props.subscription.is_trial,
     start_date: props.subscription.start_date,
@@ -57,18 +67,20 @@ const form = useForm({
 });
 
 const submitForm = () => {
+    console.log(route("business.subscriptions.store"));
     if (props.subscription.id) {
-        form.put(route("subscriptions.update", props.subscription.id));
+        form.put(route("business.subscriptions.update", props.subscription.id));
         return;
     }
 
-    form.post(route("subscriptions.store"));
+    form.post(route("business.subscriptions.store"));
 };
 
 onMounted(() => {
     getBusinesses();
     getPlans();
 });
+
 </script>
 
 <template>
@@ -87,7 +99,7 @@ onMounted(() => {
                     }}
                 </h2>
                 <div>
-                    <Link :href="route('subscriptions.index')" class="uppercase"
+                    <Link :href="route('business.subscriptions.index')" class="uppercase"
                         ><BigBackIcon
                     /></Link>
                 </div>
@@ -99,46 +111,6 @@ onMounted(() => {
 
                 <div class="shadow-md p-4 rounded-lg bg-white">
                     <div class="grid grid-cols-2 gap-5">
-                        <!-- <div>
-                            <InputLabel for="about" value="About" />
-
-                            <Textarea
-                                id="about"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.about"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.about"
-                            />
-                        </div> -->
-
-                        <div>
-                            <InputLabel for="business_id" value="Business" />
-
-                            <select
-                                class="form-input w-full"
-                                name="business_id"
-                                id="business_id"
-                                v-model="form.business_id"
-                            >
-                                <option value="">Select the business</option>
-                                <option
-                                    v-for="(busin, index) in businesses"
-                                    :key="index"
-                                    :value="busin.id"
-                                >
-                                    {{ busin.name }}
-                                </option>
-                            </select>
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.business_id"
-                            />
-                        </div>
 
                         <div>
                             <InputLabel for="plan_id" value="Plan" />
@@ -165,7 +137,24 @@ onMounted(() => {
                             />
                         </div>
 
-                        <div class=" col-span-2">
+                        <div>
+                            <InputLabel for="amount" value="Valor" />
+
+                            <TextInput
+                                id="amount"
+                                type="text"
+                                v-money="money"
+                                class="mt-1 block w-full"
+                                v-model="form.amount"
+                            />
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.amount"
+                            />
+                        </div>
+
+                        <div class="">
                             <InputLabel for="billing_cycle" value="Billing Cycle" />
 
                             <select
@@ -220,53 +209,8 @@ onMounted(() => {
                                 />
                             </div>
 
-                        <div>
-                            <InputLabel for="status" value="Status" />
-                            <select
-                                class="form-input w-full"
-                                name="status"
-                                id="status"
-                                v-model="form.status"
-                            >
-                                <option value="">Select</option>
-                                <option value="active">Active</option>
-                                <option value="pending">Pending</option>
-                                <option value="canceled">Canceled</option>
-                                <option value="past_due">Past Due</option>
-                            </select>
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.status"
-                            />
-                        </div>
 
-                        
-
-                        <div>
-                            <InputLabel for="is_trial" value="Is Trial" />
-                            <Toggle
-                                :status="form.is_trial"
-                                @click="form.is_trial = !form.is_trial"
-                            />
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.is_trial"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="active" value="Active" />
-                            <Toggle
-                                :status="form.active"
-                                @click="form.active = !form.active"
-                            />
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.active"
-                            />
-                        </div>
-
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4 col-span-2">
                             <PrimaryButton
                                 :disabled="form.processing"
                                 @click="submitForm()"
@@ -290,7 +234,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="shadow-md p-4 rounded-lg bg-white">
+                <div v-if="subscription.id" class="shadow-md p-4 rounded-lg bg-white">
                     <PaymentForm :payment="payment" />
                 </div>
 

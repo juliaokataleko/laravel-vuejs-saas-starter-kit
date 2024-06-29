@@ -31,6 +31,7 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+
 });
 
 // const revenueChartData = {
@@ -75,6 +76,23 @@ const props = defineProps({
         <div class="">
             <div class="space-y-4">
                 <div class=" grid grid-cols-3 gap-5">
+
+                    <div class="col-span-3  ">
+                        <div class="bg-green-400 p-3 flex flex-col md:flex-row items-center justify-between rounded-lg shadow-md" 
+                        :class="{'bg-yellow-500':data.alertTime,'bg-red-500':data.outOfDate}">
+                            <div>
+                                {{ data.subscription_message }}
+                            </div>
+
+                            <div v-if="data.alertTime || data.outOfDate">
+                            <Link :href="route('business.subscriptions.create')">
+                                <PrimaryButton>Update your subscription</PrimaryButton>
+                            </Link>
+                        </div>
+                        </div>
+
+                        
+                    </div>
 
                     <!-- <div class="shadow-md p-3 bg-white rounded-lg space-y-4">
                         <div class="text-lg">MRR</div>

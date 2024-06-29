@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Business\BusinessRequest;
 use App\Models\Business;
 use App\Models\Country;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,6 +43,9 @@ class SettingController extends Controller
         $user->business_id = $business->id;
         $user->save();
 
+        // check if has trial
+        $trial = $this->checkTrialSubscription($business);
+
         activity()
         ->causedBy(auth()->user())
         ->performedOn($business)
@@ -54,7 +59,11 @@ class SettingController extends Controller
      */
     public function show(int $id)
     {
-        $business = Business::findOrFail($id);
+        $business = Business::findOrFail(auth()->user()->business_id);
+
+        // check if has trial
+        $trial = $this->checkTrialSubscription($business);
+
         $countries = Country::select('id', 'name')->orderBy('name', 'asc')->get();
         return Inertia::render('Business/Businesses/Form', compact('business', 'countries'));
     }
@@ -64,8 +73,12 @@ class SettingController extends Controller
      */
     public function edit(int $id)
     {
-        $business = Business::findOrFail($id);
+        $business = Business::findOrFail(auth()->user()->business_id);
         $countries = Country::select('id', 'name')->orderBy('name', 'asc')->get();
+
+        // check if has trial
+        $trial = $this->checkTrialSubscription($business);
+
         return Inertia::render('Business/Businesses/Form', compact('business', 'countries'));
     }
 
@@ -74,9 +87,12 @@ class SettingController extends Controller
      */
     public function update(BusinessRequest $request, int $id)
     {
-        $business = Business::findOrFail($id);
+        $business = Business::findOrFail(auth()->user()->business_id);
         $data = $request->validated();
         $business->update($data);
+
+        // check if has trial
+        $trial = $this->checkTrialSubscription($business);
 
         activity()
         ->causedBy(auth()->user())
@@ -91,7 +107,30 @@ class SettingController extends Controller
      */
     public function destroy(int $id)
     {
-        $business = Business::findOrFail($id);
+        $business = Business::findOrFail(auth()->user()->business_id);
         //
+    }
+
+    private function checkTrialSubscription (Business $business): Subscription {
+        $trialSubscription = Subscription::whereIsTrial(1)->whereBusinessId($business->id)->first();
+
+        if (!$trialSubscription) {
+            $plan = Plan::first();
+
+            Subscription::query()->create([
+                'business_id' => $business->id,
+                'plan_id' => $plan->id,
+                'amount' => $plan->monthly_price,
+                'billing_cycle' => 'monthly',
+                'is_trial' => true,
+                'active' => true,
+                'start_date' => now(),
+                'end_date' => now()->addMonth(),
+                'status' => 'active'
+            ]);
+        }
+
+        $trialSubscription = Subscription::whereIsTrial(1)->whereBusinessId($business->id)->first();
+        return $trialSubscription;
     }
 }

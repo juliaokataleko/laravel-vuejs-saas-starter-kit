@@ -54,7 +54,7 @@ const deleteRecord = (id) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th  v-if="$page.props.auth.user.level == 'admin'">ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th></th>
@@ -75,7 +75,7 @@ const deleteRecord = (id) => {
                                     v-for="(user, index) in users.data"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td v-if="$page.props.auth.user.level == 'admin'">{{ user.id }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>

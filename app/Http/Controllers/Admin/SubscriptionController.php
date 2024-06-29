@@ -20,6 +20,7 @@ class SubscriptionController extends Controller
         $subscriptions = Subscription::query()
         // query
         ->with(['business', 'plan'])
+        ->orderBy('id', 'desc')
         ->paginate(10);
 
         return Inertia::render('Admin/Subscriptions/Index', compact('subscriptions'));
@@ -63,7 +64,7 @@ class SubscriptionController extends Controller
      */
     public function edit(Subscription $subscription)
     {
-        $payment = new Payment();
+        $payment = Payment::whereSubscriptionId($subscription->id)->first() ?? new Payment;
         $payment->subscription_id = $subscription->id;
         $payment->amount = $subscription->amount;
 

@@ -12,6 +12,8 @@ class Subscription extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
+    const DAYS_NUMBER_TO_ALERT = 5;
+
     public function business() {
         return $this->belongsTo(Business::class);
     }

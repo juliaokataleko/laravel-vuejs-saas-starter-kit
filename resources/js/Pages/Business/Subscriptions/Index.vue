@@ -33,7 +33,7 @@ const deleteForm = useForm({});
 
 const deleteRecord = (id) => {
     if (confirm("Are you sure?")) {
-        deleteForm.delete(route("subscriptions.destroy", id));
+        deleteForm.delete(route("business.subscriptions.destroy", id));
     }
 };
 </script>
@@ -49,7 +49,7 @@ const deleteRecord = (id) => {
                     Subscriptions
                 </h2>
                 <div>
-                    <Link :href="route('subscriptions.create')" class="uppercase">
+                    <Link :href="route('business.subscriptions.create')" class="uppercase">
                         <BigPlusIcon />
                     </Link>
                 </div>
@@ -65,14 +65,13 @@ const deleteRecord = (id) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Trial</th>
                                     <th>Plan</th>
                                     <td>Business</td>
                                     <th>Amount</th>
                                     <th>Start Date</th>
                                     <th>End date</th>
                                     <th>Active</th>
-                                    <th>Trial</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -91,7 +90,9 @@ const deleteRecord = (id) => {
                                     v-for="(subscription, index) in subscriptions.data"
                                     :key="index"
                                 >
-                                    <td>{{ subscription.id }}</td>
+                                    <td>
+                                        <Toggle :status="subscription.is_trial" />
+                                    </td>
                                     <td>{{ subscription.plan?.name }}</td>
                                     <td>{{ subscription.business?.name }}</td>
                                     <td>
@@ -103,23 +104,20 @@ const deleteRecord = (id) => {
                                         <Toggle :status="subscription.active" />
                                     </td>
                                     <td>
-                                        <Toggle :status="subscription.is_trial" />
-                                    </td>
-                                    <td>
                                         <div class="space-x-2">
-                                            <Link
-                                                :href="route('subscriptions.edit', subscription.id)"
+                                            <Link v-if="!subscription.is_trial"
+                                                :href="route('business.subscriptions.edit', subscription.id)"
                                             >
                                                 <PrimaryButton>
                                                     <EditIcon />
                                                 </PrimaryButton>
                                             </Link>
 
-                                            <DangerButton
+                                            <!-- <DangerButton
                                                 @click="deleteRecord(subscription.id)"
                                             >
                                                 <DeleteIcon />
-                                            </DangerButton>
+                                            </DangerButton> -->
                                         </div>
                                     </td>
                                 </tr>

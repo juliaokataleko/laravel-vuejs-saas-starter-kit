@@ -92,6 +92,12 @@ onMounted(() => {
 
         <div class="">
             <div class="space-y-4">
+
+                <div v-if="business.id">
+                    <Link :href="route('business.subscriptions.index')">
+                        <PrimaryButton>Subscriptions</PrimaryButton>
+                    </Link>
+                </div>
                 <div class="">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 

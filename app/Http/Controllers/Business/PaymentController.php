@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Business;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Business\PaymentRequest;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -26,9 +28,19 @@ class PaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PaymentRequest $request)
     {
-        //
+        $data = $request->validated();
+        $payment = Payment::query()->create($data);
+
+        // @TODO process in payment gateway like paypal, credit card
+
+        activity()
+        ->causedBy(auth()->user())
+        ->performedOn($payment)
+        ->log('Created a payment');
+
+        return  redirect(route('business.payments.index'))->with('success', 'Your payment was created. We are processing it.');
     }
 
     /**

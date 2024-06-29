@@ -23,7 +23,6 @@ const money = ref({
    masked: true
 })
 
-
 const props = defineProps({
     plan: {
         type: Object,
