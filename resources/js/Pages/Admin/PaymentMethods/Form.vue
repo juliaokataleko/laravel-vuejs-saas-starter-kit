@@ -11,30 +11,29 @@ import InputError from '@/Components/InputError.vue';
 import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 
 const props = defineProps({
-    tax: {
+    payment_method: {
         type: Object,
         default: () => ({}),
     },
 });
 
 const form = useForm({
-    name: props.tax.name,
-    rate: props.tax.rate,
+    name: props.payment_method.name,
 });
 
 const submitForm = () => {
 
-    if (props.tax.id) {
-        form.put(route('taxes.update', props.tax.id))
+    if (props.payment_method.id) {
+        form.put(route('payment-methods.update', props.payment_method.id))
         return
     }
 
-    form.post(route('taxes.store'))
+    form.post(route('payment-methods.store'))
 }
 </script>
 
 <template>
-    <Head :title="tax.id ? 'Edit tax' : 'Add tax'" />
+    <Head :title="payment_method.id ? 'Edit Payment Method' : 'Add Payment Metho'" />
 
     <SidebarLayout>
         <template #header>
@@ -42,10 +41,10 @@ const submitForm = () => {
                 <h2
                     class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
                 >
-                    {{ tax.id ? "Edit tax" : "Add tax" }}
+                    {{ payment_method.id ? "Edit Payment Metho" : "Add Payment Metho" }}
                 </h2>
                 <div>
-                    <Link :href="route('taxes.index')" class="uppercase"
+                    <Link :href="route('payment-methods.index')" class="uppercase"
                         ><BigBackIcon /></Link
                     >
                 </div>
@@ -55,7 +54,7 @@ const submitForm = () => {
         <div class="">
             <div class="space-y-4">
                 <div class="shadow-md p-4 rounded-lg bg-white">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3">
                         <div>
                             <InputLabel for="name" value="Name" />
 
@@ -75,21 +74,6 @@ const submitForm = () => {
                             />
                         </div>
 
-                        <div>
-                            <InputLabel for="rate" value="Rate" />
-
-                            <TextInput
-                                id="rate"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.rate"
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.rate"
-                            />
-                        </div>
 
                         <div class="flex items-center gap-4">
                             <PrimaryButton :disabled="form.processing" @click="submitForm()"

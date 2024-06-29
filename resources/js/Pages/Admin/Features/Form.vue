@@ -6,35 +6,38 @@ import Pagination from "@/Components/Pagination.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from '@/Components/TextInput.vue';
+import Textarea from '@/Components/Textarea.vue';
+import Toggle from "@/Components/Toggle.vue";
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import BigBackIcon from "@/Components/Icons/BigBackIcon.vue";
 
 const props = defineProps({
-    tax: {
+    feature: {
         type: Object,
         default: () => ({}),
     },
 });
 
 const form = useForm({
-    name: props.tax.name,
-    rate: props.tax.rate,
+    title: props.feature.title,
+    content: props.feature.content,
+    is_published: props.feature.is_published,
 });
 
 const submitForm = () => {
 
-    if (props.tax.id) {
-        form.put(route('taxes.update', props.tax.id))
+    if (props.feature.id) {
+        form.put(route('features.update', props.feature.id))
         return
     }
 
-    form.post(route('taxes.store'))
+    form.post(route('features.store'))
 }
 </script>
 
 <template>
-    <Head :title="tax.id ? 'Edit tax' : 'Add tax'" />
+    <Head :title="feature.id ? 'Edit feature' : 'Add feature'" />
 
     <SidebarLayout>
         <template #header>
@@ -42,10 +45,10 @@ const submitForm = () => {
                 <h2
                     class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
                 >
-                    {{ tax.id ? "Edit tax" : "Add tax" }}
+                    {{ feature.id ? "Edit feature" : "Add feature" }}
                 </h2>
                 <div>
-                    <Link :href="route('taxes.index')" class="uppercase"
+                    <Link :href="route('features.index')" class="uppercase"
                         ><BigBackIcon /></Link
                     >
                 </div>
@@ -55,39 +58,50 @@ const submitForm = () => {
         <div class="">
             <div class="space-y-4">
                 <div class="shadow-md p-4 rounded-lg bg-white">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3">
                         <div>
-                            <InputLabel for="name" value="Name" />
+                            <InputLabel for="title" value="Title" />
 
                             <TextInput
-                                id="name"
+                                id="title"
                                 type="text"
                                 class="mt-1 block w-full"
-                                v-model="form.name"
+                                v-model="form.title"
                                 required
                                 autofocus
-                                autocomplete="name"
+                                autocomplete="title"
                             />
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.name"
+                                :message="form.errors.title"
                             />
                         </div>
 
                         <div>
-                            <InputLabel for="rate" value="Rate" />
+                            <InputLabel for="content" value="Content" />
 
-                            <TextInput
-                                id="rate"
-                                type="text"
+                            <Textarea
+                                id="content"
                                 class="mt-1 block w-full"
-                                v-model="form.rate"
+                                v-model="form.content"
                             />
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.rate"
+                                :message="form.errors.content"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="is_published" value="Is Published" />
+                            <Toggle
+                                :status="form.is_published"
+                                @click="form.is_published = !form.is_published"
+                            />
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.is_published"
                             />
                         </div>
 
