@@ -15,7 +15,7 @@ class PlanController extends Controller
      */
     public function index()
     {
-        $plans = Plan::paginate(10);
+        $plans = Plan::orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render("Admin/Plans/Index", compact('plans'));
     }
@@ -26,6 +26,9 @@ class PlanController extends Controller
     public function create()
     {
         $plan = new Plan();
+
+        $plan->features = Plan::features;
+
         return Inertia::render("Admin/Plans/Form", compact('plan'));
     }
 

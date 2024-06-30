@@ -11,6 +11,26 @@ class Plan extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];
+    const features = [
+        [
+            'feature_slug' => 'invoices_management',
+            'feature_name' => 'Invoices Management',
+            'feature_type' => 'boolean',
+            'feature_default' => false,
+        ],
+        [
+            'feature_slug' => 'finances_management',
+            'feature_name' => 'Finances Management',
+            'feature_type' => 'boolean',
+            'feature_default' => false,
+        ],
+        [
+            'feature_slug' => 'total_users',
+            'feature_name' => 'Total users',
+            'feature_type' => 'number',
+            'feature_default' => 1,
+        ]
+    ];
 
     public function subscriptions() {
         return $this->hasMany(Subscription::class);

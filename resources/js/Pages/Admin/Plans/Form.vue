@@ -120,11 +120,11 @@ const removeFeature = (item) => {
                                 <div class="text-2xl font-bold">
                                     Features
                                 </div>
-                                <div class="">
+                                <!-- <div class="">
                                     <button class="text-lg font-bold" @click="addFeature()">
                                         Add feature
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
                             <div class=" space-y-3">
 
@@ -133,6 +133,7 @@ const removeFeature = (item) => {
                                         <InputLabel for="feature_name" value="Name" />
                                         <TextInput
                                             id="feature_name"
+                                            readonly
                                             type="text"
                                             class="mt-1 block w-full"
                                             v-model="item.feature_name"
@@ -141,7 +142,7 @@ const removeFeature = (item) => {
 
                                     <div>
                                         <InputLabel for="feature_type" value="Type" />
-                                        <select class="form-input mt-1 w-full" name="feature_type" id="feature_type" v-model="item.feature_type">
+                                        <select disabled class="form-input mt-1 w-full" name="feature_type" id="feature_type" v-model="item.feature_type">
                                             <option value="">Select a type</option>
                                             <option value="text">Input Text</option>
                                             <option value="number">Input Number</option>
@@ -149,19 +150,22 @@ const removeFeature = (item) => {
                                         </select>
                                     </div>
 
-                                    <div>
+                                    <div>  
                                         <InputLabel for="feature_default" value="Default Value" />
                                         <TextInput
+                                            v-if="item.feature_type != 'boolean'"
+                                            
                                             id="feature_default"
-                                            type="text"
+                                            :type="item.feature_type"
                                             class="mt-1 block w-full"
                                             v-model="item.feature_default"
                                         />
+                                        <Toggle v-if="item.feature_type == 'boolean'" :status="item.feature_default" @click="item.feature_default = !item.feature_default"/>
                                     </div>
 
-                                    <div class="col-span-3">
+                                    <!-- <div class="col-span-3">
                                         <button @click="removeFeature(item)" class="text-red-600">Remove</button>
-                                    </div>
+                                    </div> -->
                                 </div>
 
                             </div>

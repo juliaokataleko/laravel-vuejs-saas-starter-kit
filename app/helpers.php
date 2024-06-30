@@ -12,7 +12,7 @@ if (!function_exists('formatCurrency')) {
 
 if (!function_exists('cleanFormatedMoney')) {
     function cleanFormatedMoney($value) {
-        $value = str_replace(['$', ' ', 'R$', 'Kz', 'AKZ'], '', $value);
+        $value = str_replace(['$', ' ', 'R$', 'Kz', 'AKZ', '.'], '', $value);
         $value = str_replace([','], '.', $value);
         return $value;
     }
